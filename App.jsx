@@ -531,6 +531,35 @@ function Funnel({ onAnalyze }) {
 }
 
 // ── ANALYZING ──────────────────────────────────────────────────────────────
+async function extractPdfText(file) {
+  const pdfjsLib = window.pdfjsLib;
+
+  if (!pdfjsLib) {
+    throw new Error("PDF.js non chargé");
+  }
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js";
+
+  const arrayBuffer = await file.arrayBuffer();
+
+  const pdf = await pdfjsLib.getDocument({
+    data: arrayBuffer,
+  }).promise;
+
+  let text = "";
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    const page = await pdf.getPage(pageNumber);
+    const content = await page.getTextContent();
+
+    const strings = content.items.map((item) => item.str);
+
+    text += strings.join(" ") + "\n";
+  }
+
+  return text;
+}
 function Analyzing({ files, offer, onDone }) {
   const [stepIdx, setStepIdx] = useState(0);
   const steps = [
@@ -552,14 +581,8 @@ function Analyzing({ files, offer, onDone }) {
       try {
         let reportData;
         if (files && files.length > 0) {
-          const base64 = await new Promise((res, rej) => {
-            const r = new FileReader();
-            r.onload = () => res(r.result.split(",")[1]);
-            r.onerror = rej;
-            r.readAsDataURL(files[0]);
-          });
-
-          const offerType = offer?.id || "complet";
+         const extractedText = await extractPdfText(files[0]);
+const offerType = offer?.id || "complet";
           const systemPrompt = `Tu es CheckMaCession, un outil d'analyse de dossiers de cession de fonds de commerce. Tu parles à deux types de personnes en même temps :
 1. L'acheteur néophyte : tu lui expliques en langage simple, sans jargon, comme si tu parlais à un ami.
 2. Le professionnel (agent, courtier) : tu fournis aussi les références techniques précises.
