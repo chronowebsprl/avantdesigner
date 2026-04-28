@@ -572,8 +572,10 @@ Tu détectes automatiquement :
 
 RÈGLE ABSOLUE : Tu lis l'adresse dans le document et tu l'utilises telle quelle.
 Tu ne changes JAMAIS la ville. Si c'est Saint-Ouen, tu écris Saint-Ouen. Si c'est Lyon, tu écris Lyon.
-Si aucune adresse n'est trouvée, tu écris ville: "Non précisée dans le document" et quartier: null.
-Tu n'inventes JAMAIS une ville, un quartier ou une adresse.
+Si aucune adresse n'est trouvée avec certitude, tu écris ville: "Ville à confirmer dans le document" et quartier: null.
+Tu n'utilises JAMAIS une ville provenant d'un exemple de démonstration.
+Tu ne réutilises JAMAIS Saint-Ouen par défaut.
+La ville doit venir uniquement du document analysé.
 
 CONTEXTE LOCAL PAR VILLE (uniquement basé sur la ville réellement détectée dans le document) :
 - Marseille (tous arrondissements) : marché CHR tendu sur les arrondissements 1-7, forte négociation culturelle, bailleurs souvent familiaux peu formalisés, forte concurrence CHR, saisonnalité marquée Vieux-Port et Corniche
@@ -680,10 +682,10 @@ function getDemoReport() {
     score: 38,
     scoreLabel: "Risqué",
     commerce: "Restaurant / Petite restauration",
-    ville: "Saint-Ouen",
-    quartier: "Marché Vernaison",
-    contexteLocal: "Le marché CHR de Saint-Ouen est en pleine mutation — secteur des puces attractif pour la restauration, clientèle touristique et locale mixte, bailleurs de marché souvent plus souples que les bailleurs institutionnels classiques.",
-    loyer: "1 700€/mois",
+    ville: "Ville à confirmer dans le document",
+quartier: null,
+contexteLocal: "Le contexte local sera analysé uniquement après détection de la ville réelle dans le document.",
+loyer: null,
     redFlags: [
       { simple: "Votre bail vous interdit de faire de la livraison. Si vous voulez proposer Uber Eats ou Just Eat demain, le propriétaire peut légalement vous le refuser.", pro: "Clause de destination Art. 2 restrictive — activité limitée à 'petite restauration assise uniquement', vente à emporter et livraison non couvertes." },
       { simple: "Tout ce que vous installez dans le local — votre cuisine professionnelle, votre comptoir, votre déco — appartient au propriétaire quand vous partez. Sans indemnité.", pro: "Art. 4.8 — Travaux et aménagements propriété du bailleur en fin d'exploitation sans indemnité. Risque financier estimé 40 000 à 120 000€ pour un CHR." },
